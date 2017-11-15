@@ -136,18 +136,37 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddFolderForm.cpp" />
+    <ClCompile Include="AddObjectForm.cpp" />
     <ClCompile Include="AnnotationForm.cpp" />
+    <ClCompile Include="AnnotationModel.cpp" />
+    <ClCompile Include="AnnotationPresenter.cpp" />
     <ClCompile Include="NewProjectForm.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddFolderForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="AddObjectForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="AnnotationForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="AnnotationModel.h" />
+    <ClInclude Include="AnnotationPresenter.h" />
+    <ClInclude Include="IAnnotationView.h" />
     <ClInclude Include="NewProjectForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AddFolderForm.resx">
+      <DependentUpon>AddFolderForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddObjectForm.resx">
+      <DependentUpon>AddObjectForm.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AnnotationForm.resx">
       <DependentUpon>AnnotationForm.h</DependentUpon>
     </EmbeddedResource>

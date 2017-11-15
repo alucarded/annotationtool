@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IAnnotationView.h"
 #include "NewProjectForm.h"
 
 namespace AnnotationTool {
@@ -14,7 +15,7 @@ namespace AnnotationTool {
 	/// <summary>
 	/// Podsumowanie informacji o AnnotationForm
 	/// </summary>
-	public ref class AnnotationForm : public System::Windows::Forms::Form
+	public ref class AnnotationForm : public System::Windows::Forms::Form, public IAnnotationView
 	{
 	public:
 		AnnotationForm(void)
@@ -40,6 +41,11 @@ namespace AnnotationTool {
             projectNode->Text = L"Project";
             this->treeView1->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) { projectNode });
 		}
+
+        // IAnnotationView
+        void UpdateProject() override {
+            
+        }
 
 	protected:
 		/// <summary>
@@ -265,5 +271,6 @@ private: System::Void addObjectToolStripMenuItem_Click(System::Object^  sender, 
     // TODO: add object: update both View (here) and Model part
     objectsNode->Nodes->Add(gcnew TreeNode(L"Object"));
 }
+
 };
 }
