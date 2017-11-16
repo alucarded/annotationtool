@@ -1,5 +1,7 @@
 #pragma once
 
+#include "INewProjectView.h"
+
 namespace AnnotationTool {
 
 	using namespace System;
@@ -12,7 +14,7 @@ namespace AnnotationTool {
 	/// <summary>
 	/// Podsumowanie informacji o NewProjectForm
 	/// </summary>
-	public ref class NewProjectForm : public System::Windows::Forms::Form
+	public ref class NewProjectForm : public System::Windows::Forms::Form, public INewProjectView
 	{
 	public:
 		NewProjectForm(void)
@@ -22,6 +24,11 @@ namespace AnnotationTool {
 			//TODO: W tym miejscu dodaj kod konstruktora
 			//
 		}
+
+        void UpdateProject() override
+        {
+
+        }
 
 	protected:
 		/// <summary>

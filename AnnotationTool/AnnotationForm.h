@@ -2,6 +2,11 @@
 
 #include "IAnnotationView.h"
 #include "NewProjectForm.h"
+#include "NewProjectPresenter.h"
+
+#include "AnnotationModel.h" // unmanaged
+
+#pragma managed
 
 namespace AnnotationTool {
 
@@ -18,7 +23,7 @@ namespace AnnotationTool {
 	public ref class AnnotationForm : public System::Windows::Forms::Form, public IAnnotationView
 	{
 	public:
-		AnnotationForm(void)
+		AnnotationForm(AnnotationModel * model) : m_model(model)
 		{
 			InitializeComponent();
 
@@ -90,6 +95,7 @@ namespace AnnotationTool {
         System::Windows::Forms::TreeNode^  foldersNode;
         System::Windows::Forms::TreeNode^  projectNode;
 
+        AnnotationModel * m_model;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -265,6 +271,7 @@ namespace AnnotationTool {
 	}
 private: System::Void newToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	NewProjectForm^ new_form = gcnew NewProjectForm();
+    NewProjectPresenter^ new_presenter = gcnew NewProjectPresenter(new_form, m_model);
 	new_form->ShowDialog();
 }
 private: System::Void addObjectToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {

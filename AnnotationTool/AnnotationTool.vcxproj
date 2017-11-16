@@ -142,6 +142,7 @@
     <ClCompile Include="AnnotationModel.cpp" />
     <ClCompile Include="AnnotationPresenter.cpp" />
     <ClCompile Include="NewProjectForm.cpp" />
+    <ClCompile Include="NewProjectPresenter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AddFolderForm.h">
@@ -156,9 +157,11 @@
     <ClInclude Include="AnnotationModel.h" />
     <ClInclude Include="AnnotationPresenter.h" />
     <ClInclude Include="IAnnotationView.h" />
+    <ClInclude Include="INewProjectView.h" />
     <ClInclude Include="NewProjectForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="NewProjectPresenter.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AddFolderForm.resx">
