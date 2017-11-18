@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "IAnnotationView.h"
 #include "NewProjectForm.h"
 #include "NewProjectPresenter.h"
@@ -48,8 +50,8 @@ namespace AnnotationTool {
 		}
 
         // IAnnotationView
-        void UpdateProject() override {
-            
+        void UpdateProject(System::String^ name, System::String^ description, int mode) override {
+            treeView1->Nodes[0]->Text = name;
         }
 
 	protected:
@@ -256,7 +258,7 @@ namespace AnnotationTool {
             this->Controls->Add(this->menuStrip1);
             this->MainMenuStrip = this->menuStrip1;
             this->Name = L"AnnotationForm";
-            this->Text = L"AnnotationForm";
+            this->Text = L"Annotation Tool";
             this->ctxMenuObject->ResumeLayout(false);
             this->ctxMenuFolder->ResumeLayout(false);
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
@@ -270,7 +272,7 @@ namespace AnnotationTool {
 	private: System::Void treeView1_AfterSelect(System::Object^  sender, System::Windows::Forms::TreeViewEventArgs^  e) {
 	}
 private: System::Void newToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	NewProjectForm^ new_form = gcnew NewProjectForm();
+	NewProjectForm^ new_form = gcnew NewProjectForm(this);
     NewProjectPresenter^ new_presenter = gcnew NewProjectPresenter(new_form, m_model);
 	new_form->ShowDialog();
 }

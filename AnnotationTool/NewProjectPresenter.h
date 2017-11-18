@@ -11,6 +11,7 @@ public:
     NewProjectPresenter(INewProjectView^ view, AnnotationModel * model);
     ~NewProjectPresenter();
 
+    void OnNewProjectClicked(System::String^ name, System::String^ description, int mode);
 private:
     INewProjectView^ m_view;
     AnnotationModel * m_model;

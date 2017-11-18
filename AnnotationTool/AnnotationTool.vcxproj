@@ -162,6 +162,7 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="NewProjectPresenter.h" />
+    <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AddFolderForm.resx">

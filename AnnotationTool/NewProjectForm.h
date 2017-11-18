@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IAnnotationView.h"
 #include "INewProjectView.h"
 
 namespace AnnotationTool {
@@ -17,7 +18,8 @@ namespace AnnotationTool {
 	public ref class NewProjectForm : public System::Windows::Forms::Form, public INewProjectView
 	{
 	public:
-		NewProjectForm(void)
+
+		NewProjectForm(IAnnotationView^ annotation_view) : m_annotation_view(annotation_view)
 		{
 			InitializeComponent();
 			//
@@ -25,9 +27,25 @@ namespace AnnotationTool {
 			//
 		}
 
-        void UpdateProject() override
+        void UpdateProject(System::String^ name, System::String^ description, int mode) override
         {
+            m_annotation_view->UpdateProject(name, description, mode);
+        }
 
+        // INewProjectView
+        virtual event SendProjectDetails^ NewProjectClicked {
+                void add(SendProjectDetails ^ d) {
+                    new_project_clicked += d;
+                }
+                void remove(SendProjectDetails ^ d) {
+                    new_project_clicked -= d;
+                }
+                void raise(System::String^ name, System::String^ description, int mode) {
+                    SendProjectDetails^ tmp = new_project_clicked;
+                    if (tmp) {
+                        tmp->Invoke(name, description, mode);
+                    }
+                }
         }
 
 	protected:
@@ -42,20 +60,27 @@ namespace AnnotationTool {
 			}
 		}
 	private: System::Windows::Forms::Button^  OKButton;
-	protected:
-	private: System::Windows::Forms::Button^  CancelButton;
+    private: System::Windows::Forms::Button^  cancelButton;
+    protected:
+
     private: System::Windows::Forms::Label^  label1;
     private: System::Windows::Forms::Label^  label2;
     private: System::Windows::Forms::Label^  label3;
-    private: System::Windows::Forms::TextBox^  textBox1;
-    private: System::Windows::Forms::RichTextBox^  richTextBox1;
-    private: System::Windows::Forms::ComboBox^  comboBox1;
+    private: System::Windows::Forms::TextBox^  projectNameTextBox;
+    private: System::Windows::Forms::RichTextBox^  descriptionTextBox;
+    private: System::Windows::Forms::ComboBox^  modeComboBox;
+
+
+
 
 	private:
 		/// <summary>
 		/// Wymagana zmienna projektanta.
 		/// </summary>
 		System::ComponentModel::Container ^components;
+
+        SendProjectDetails^ new_project_clicked;
+        IAnnotationView^ m_annotation_view;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -65,13 +90,13 @@ namespace AnnotationTool {
 		void InitializeComponent(void)
 		{
             this->OKButton = (gcnew System::Windows::Forms::Button());
-            this->CancelButton = (gcnew System::Windows::Forms::Button());
+            this->cancelButton = (gcnew System::Windows::Forms::Button());
             this->label1 = (gcnew System::Windows::Forms::Label());
             this->label2 = (gcnew System::Windows::Forms::Label());
             this->label3 = (gcnew System::Windows::Forms::Label());
-            this->textBox1 = (gcnew System::Windows::Forms::TextBox());
-            this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
-            this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
+            this->projectNameTextBox = (gcnew System::Windows::Forms::TextBox());
+            this->descriptionTextBox = (gcnew System::Windows::Forms::RichTextBox());
+            this->modeComboBox = (gcnew System::Windows::Forms::ComboBox());
             this->SuspendLayout();
             // 
             // OKButton
@@ -84,14 +109,14 @@ namespace AnnotationTool {
             this->OKButton->UseVisualStyleBackColor = true;
             this->OKButton->Click += gcnew System::EventHandler(this, &NewProjectForm::OKButton_Click);
             // 
-            // CancelButton
+            // cancelButton
             // 
-            this->CancelButton->Location = System::Drawing::Point(341, 164);
-            this->CancelButton->Name = L"CancelButton";
-            this->CancelButton->Size = System::Drawing::Size(75, 23);
-            this->CancelButton->TabIndex = 1;
-            this->CancelButton->Text = L"Cancel";
-            this->CancelButton->UseVisualStyleBackColor = true;
+            this->cancelButton->Location = System::Drawing::Point(341, 164);
+            this->cancelButton->Name = L"cancelButton";
+            this->cancelButton->Size = System::Drawing::Size(75, 23);
+            this->cancelButton->TabIndex = 1;
+            this->cancelButton->Text = L"Cancel";
+            this->cancelButton->UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -120,41 +145,41 @@ namespace AnnotationTool {
             this->label3->TabIndex = 4;
             this->label3->Text = L"Mode:";
             // 
-            // textBox1
+            // projectNameTextBox
             // 
-            this->textBox1->Location = System::Drawing::Point(96, 24);
-            this->textBox1->Name = L"textBox1";
-            this->textBox1->Size = System::Drawing::Size(209, 20);
-            this->textBox1->TabIndex = 5;
+            this->projectNameTextBox->Location = System::Drawing::Point(96, 24);
+            this->projectNameTextBox->Name = L"projectNameTextBox";
+            this->projectNameTextBox->Size = System::Drawing::Size(209, 20);
+            this->projectNameTextBox->TabIndex = 5;
             // 
-            // richTextBox1
+            // descriptionTextBox
             // 
-            this->richTextBox1->Location = System::Drawing::Point(96, 56);
-            this->richTextBox1->Name = L"richTextBox1";
-            this->richTextBox1->Size = System::Drawing::Size(309, 71);
-            this->richTextBox1->TabIndex = 6;
-            this->richTextBox1->Text = L"";
+            this->descriptionTextBox->Location = System::Drawing::Point(96, 56);
+            this->descriptionTextBox->Name = L"descriptionTextBox";
+            this->descriptionTextBox->Size = System::Drawing::Size(309, 71);
+            this->descriptionTextBox->TabIndex = 6;
+            this->descriptionTextBox->Text = L"";
             // 
-            // comboBox1
+            // modeComboBox
             // 
-            this->comboBox1->FormattingEnabled = true;
-            this->comboBox1->Location = System::Drawing::Point(96, 132);
-            this->comboBox1->Name = L"comboBox1";
-            this->comboBox1->Size = System::Drawing::Size(121, 21);
-            this->comboBox1->TabIndex = 7;
+            this->modeComboBox->FormattingEnabled = true;
+            this->modeComboBox->Location = System::Drawing::Point(96, 132);
+            this->modeComboBox->Name = L"modeComboBox";
+            this->modeComboBox->Size = System::Drawing::Size(121, 21);
+            this->modeComboBox->TabIndex = 7;
             // 
             // NewProjectForm
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(430, 199);
-            this->Controls->Add(this->comboBox1);
-            this->Controls->Add(this->richTextBox1);
-            this->Controls->Add(this->textBox1);
+            this->Controls->Add(this->modeComboBox);
+            this->Controls->Add(this->descriptionTextBox);
+            this->Controls->Add(this->projectNameTextBox);
             this->Controls->Add(this->label3);
             this->Controls->Add(this->label2);
             this->Controls->Add(this->label1);
-            this->Controls->Add(this->CancelButton);
+            this->Controls->Add(this->cancelButton);
             this->Controls->Add(this->OKButton);
             this->Name = L"NewProjectForm";
             this->Text = L"New Project";
@@ -164,7 +189,8 @@ namespace AnnotationTool {
         }
 #pragma endregion
 	private: System::Void OKButton_Click(System::Object^  sender, System::EventArgs^  e) {
+        this->NewProjectClicked(projectNameTextBox->Text, descriptionTextBox->Text, modeComboBox->SelectedIndex);
         this->Close();
 	}
-	};
+};
 }
