@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "AddFolderForm.h"
+#include "AddFolderPresenter.h"
 #include "IAnnotationView.h"
 #include "NewProjectForm.h"
 #include "NewProjectPresenter.h"
@@ -50,8 +52,19 @@ namespace AnnotationTool {
 		}
 
         // IAnnotationView
-        void UpdateProject(System::String^ name, System::String^ description, int mode) override {
+        void UpdateProject(System::String^ name, System::String^ description, int mode) override
+        {
             treeView1->Nodes[0]->Text = name;
+        }
+
+        void AddPaths(System::String^ path, System::Collections::ArrayList^ image_names, bool is_recursive) override
+        {
+            TreeNode^ folder = gcnew TreeNode(path);
+            System::Collections::IEnumerator^ en = image_names->GetEnumerator();
+            while (en->MoveNext()) {
+                folder->Nodes->Add(gcnew TreeNode(safe_cast<String^>(en->Current)));
+            }
+            foldersNode->Nodes->Add(folder);
         }
 
 	protected:
@@ -155,12 +168,13 @@ namespace AnnotationTool {
             this->addFolderToolStripMenuItem->Name = L"addFolderToolStripMenuItem";
             this->addFolderToolStripMenuItem->Size = System::Drawing::Size(132, 22);
             this->addFolderToolStripMenuItem->Text = L"Add Folder";
+            this->addFolderToolStripMenuItem->Click += gcnew System::EventHandler(this, &AnnotationForm::addFolderToolStripMenuItem_Click);
             // 
             // pictureBox1
             // 
-            this->pictureBox1->Location = System::Drawing::Point(204, 34);
+            this->pictureBox1->Location = System::Drawing::Point(252, 34);
             this->pictureBox1->Name = L"pictureBox1";
-            this->pictureBox1->Size = System::Drawing::Size(613, 498);
+            this->pictureBox1->Size = System::Drawing::Size(683, 579);
             this->pictureBox1->TabIndex = 1;
             this->pictureBox1->TabStop = false;
             // 
@@ -172,7 +186,7 @@ namespace AnnotationTool {
             });
             this->menuStrip1->Location = System::Drawing::Point(0, 0);
             this->menuStrip1->Name = L"menuStrip1";
-            this->menuStrip1->Size = System::Drawing::Size(829, 24);
+            this->menuStrip1->Size = System::Drawing::Size(947, 24);
             this->menuStrip1->TabIndex = 2;
             this->menuStrip1->Text = L"menuStrip1";
             // 
@@ -239,7 +253,7 @@ namespace AnnotationTool {
             // 
             this->treeView1->Location = System::Drawing::Point(12, 34);
             this->treeView1->Name = L"treeView1";
-            this->treeView1->Size = System::Drawing::Size(186, 498);
+            this->treeView1->Size = System::Drawing::Size(234, 579);
             this->treeView1->TabIndex = 3;
             this->treeView1->AfterSelect += gcnew System::Windows::Forms::TreeViewEventHandler(this, &AnnotationForm::treeView1_AfterSelect);
             // 
@@ -252,7 +266,7 @@ namespace AnnotationTool {
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-            this->ClientSize = System::Drawing::Size(829, 565);
+            this->ClientSize = System::Drawing::Size(947, 625);
             this->Controls->Add(this->treeView1);
             this->Controls->Add(this->pictureBox1);
             this->Controls->Add(this->menuStrip1);
@@ -281,5 +295,10 @@ private: System::Void addObjectToolStripMenuItem_Click(System::Object^  sender, 
     objectsNode->Nodes->Add(gcnew TreeNode(L"Object"));
 }
 
+private: System::Void addFolderToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+    AddFolderForm^ new_form = gcnew AddFolderForm(this);
+    AddFolderPresenter^ new_presenter = gcnew AddFolderPresenter(new_form, m_model);
+    new_form->ShowDialog();
+}
 };
 }

@@ -3,7 +3,7 @@
 
 NewProjectPresenter::NewProjectPresenter(INewProjectView^ view, AnnotationModel * model) : m_view(view), m_model(model)
 {
-    view->NewProjectClicked += gcnew SendProjectDetails(this, &NewProjectPresenter::OnNewProjectClicked);
+    view->NewProjectCreated += gcnew SendProjectDetails(this, &NewProjectPresenter::OnNewProjectCreated);
 }
 
 
@@ -11,7 +11,7 @@ NewProjectPresenter::~NewProjectPresenter()
 {
 }
 
-void NewProjectPresenter::OnNewProjectClicked(System::String ^ name, System::String ^ description, int mode)
+void NewProjectPresenter::OnNewProjectCreated(System::String ^ name, System::String ^ description, int mode)
 {
     std::string std_name, std_desc;
     MarshalString(name, std_name);

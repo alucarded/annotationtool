@@ -33,15 +33,15 @@ namespace AnnotationTool {
         }
 
         // INewProjectView
-        virtual event SendProjectDetails^ NewProjectClicked {
+        virtual event SendProjectDetails^ NewProjectCreated {
                 void add(SendProjectDetails ^ d) {
-                    new_project_clicked += d;
+                    project_created_event += d;
                 }
                 void remove(SendProjectDetails ^ d) {
-                    new_project_clicked -= d;
+                    project_created_event -= d;
                 }
                 void raise(System::String^ name, System::String^ description, int mode) {
-                    SendProjectDetails^ tmp = new_project_clicked;
+                    SendProjectDetails^ tmp = project_created_event;
                     if (tmp) {
                         tmp->Invoke(name, description, mode);
                     }
@@ -79,7 +79,7 @@ namespace AnnotationTool {
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
-        SendProjectDetails^ new_project_clicked;
+        SendProjectDetails^ project_created_event;
         IAnnotationView^ m_annotation_view;
 
 #pragma region Windows Form Designer generated code
@@ -117,6 +117,7 @@ namespace AnnotationTool {
             this->cancelButton->TabIndex = 1;
             this->cancelButton->Text = L"Cancel";
             this->cancelButton->UseVisualStyleBackColor = true;
+            this->cancelButton->Click += gcnew System::EventHandler(this, &NewProjectForm::cancelButton_Click);
             // 
             // label1
             // 
@@ -189,8 +190,11 @@ namespace AnnotationTool {
         }
 #pragma endregion
 	private: System::Void OKButton_Click(System::Object^  sender, System::EventArgs^  e) {
-        this->NewProjectClicked(projectNameTextBox->Text, descriptionTextBox->Text, modeComboBox->SelectedIndex);
+        this->NewProjectCreated(projectNameTextBox->Text, descriptionTextBox->Text, modeComboBox->SelectedIndex);
         this->Close();
 	}
+private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
+    this->Close();
+}
 };
 }

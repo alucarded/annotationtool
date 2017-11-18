@@ -44,6 +44,8 @@ namespace AnnotationTool {
     private: System::Windows::Forms::RichTextBox^  richTextBox1;
     private: System::Windows::Forms::TextBox^  textBox2;
     private: System::Windows::Forms::TextBox^  textBox3;
+    private: System::Windows::Forms::Button^  OKButton;
+    private: System::Windows::Forms::Button^  cancelButton;
     protected:
 
 	private:
@@ -69,6 +71,8 @@ namespace AnnotationTool {
             this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
             this->textBox2 = (gcnew System::Windows::Forms::TextBox());
             this->textBox3 = (gcnew System::Windows::Forms::TextBox());
+            this->OKButton = (gcnew System::Windows::Forms::Button());
+            this->cancelButton = (gcnew System::Windows::Forms::Button());
             this->SuspendLayout();
             // 
             // label1
@@ -111,7 +115,7 @@ namespace AnnotationTool {
             // label4
             // 
             this->label4->AutoSize = true;
-            this->label4->Location = System::Drawing::Point(170, 155);
+            this->label4->Location = System::Drawing::Point(152, 155);
             this->label4->Name = L"label4";
             this->label4->Size = System::Drawing::Size(38, 13);
             this->label4->TabIndex = 4;
@@ -120,7 +124,7 @@ namespace AnnotationTool {
             // label5
             // 
             this->label5->AutoSize = true;
-            this->label5->Location = System::Drawing::Point(295, 155);
+            this->label5->Location = System::Drawing::Point(253, 155);
             this->label5->Name = L"label5";
             this->label5->Size = System::Drawing::Size(41, 13);
             this->label5->TabIndex = 5;
@@ -143,23 +147,43 @@ namespace AnnotationTool {
             // 
             // textBox2
             // 
-            this->textBox2->Location = System::Drawing::Point(214, 152);
+            this->textBox2->Location = System::Drawing::Point(196, 152);
             this->textBox2->Name = L"textBox2";
             this->textBox2->Size = System::Drawing::Size(39, 20);
             this->textBox2->TabIndex = 8;
             // 
             // textBox3
             // 
-            this->textBox3->Location = System::Drawing::Point(353, 152);
+            this->textBox3->Location = System::Drawing::Point(300, 152);
             this->textBox3->Name = L"textBox3";
             this->textBox3->Size = System::Drawing::Size(41, 20);
             this->textBox3->TabIndex = 9;
+            // 
+            // OKButton
+            // 
+            this->OKButton->Location = System::Drawing::Point(300, 181);
+            this->OKButton->Name = L"OKButton";
+            this->OKButton->Size = System::Drawing::Size(86, 23);
+            this->OKButton->TabIndex = 10;
+            this->OKButton->Text = L"OK";
+            this->OKButton->UseVisualStyleBackColor = true;
+            // 
+            // cancelButton
+            // 
+            this->cancelButton->Location = System::Drawing::Point(392, 181);
+            this->cancelButton->Name = L"cancelButton";
+            this->cancelButton->Size = System::Drawing::Size(86, 23);
+            this->cancelButton->TabIndex = 11;
+            this->cancelButton->Text = L"Cancel";
+            this->cancelButton->UseVisualStyleBackColor = true;
             // 
             // AddObjectForm
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(492, 216);
+            this->Controls->Add(this->cancelButton);
+            this->Controls->Add(this->OKButton);
             this->Controls->Add(this->textBox3);
             this->Controls->Add(this->textBox2);
             this->Controls->Add(this->richTextBox1);
@@ -171,7 +195,7 @@ namespace AnnotationTool {
             this->Controls->Add(this->label2);
             this->Controls->Add(this->label1);
             this->Name = L"AddObjectForm";
-            this->Text = L"AddObjectForm";
+            this->Text = L"Add Object";
             this->ResumeLayout(false);
             this->PerformLayout();
 
