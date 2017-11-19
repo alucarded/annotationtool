@@ -13,6 +13,7 @@ public:
 
     void OnObjectNodeSelected(System::String^ obj_name);
     void OnImageNodeSelected(System::String^ image_path);
+    void OnAnnotationDrawn(int x, int y, int w, int h);
 private:
     IAnnotationView^ m_view;
     AnnotationModel * m_model;

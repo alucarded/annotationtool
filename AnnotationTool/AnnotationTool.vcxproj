@@ -139,6 +139,7 @@
     <ClCompile Include="AddFolderForm.cpp" />
     <ClCompile Include="AddFolderPresenter.cpp" />
     <ClCompile Include="AddObjectForm.cpp" />
+    <ClCompile Include="AddObjectPresenter.cpp" />
     <ClCompile Include="AnnotationForm.cpp" />
     <ClCompile Include="AnnotationModel.cpp" />
     <ClCompile Include="AnnotationPresenter.cpp" />
@@ -154,12 +155,14 @@
     <ClInclude Include="AddObjectForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="AddObjectPresenter.h" />
     <ClInclude Include="AnnotationForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="AnnotationModel.h" />
     <ClInclude Include="AnnotationPresenter.h" />
     <ClInclude Include="IAddFolderView.h" />
+    <ClInclude Include="IAddObjectView.h" />
     <ClInclude Include="IAnnotationView.h" />
     <ClInclude Include="INewProjectView.h" />
     <ClInclude Include="NewProjectForm.h">

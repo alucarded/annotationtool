@@ -1,5 +1,8 @@
 #pragma once
 
+#include "IAddObjectView.h"
+#include "IAnnotationView.h"
+
 namespace AnnotationTool {
 
 	using namespace System;
@@ -12,16 +15,36 @@ namespace AnnotationTool {
 	/// <summary>
 	/// Podsumowanie informacji o AddObjectForm
 	/// </summary>
-	public ref class AddObjectForm : public System::Windows::Forms::Form
+	public ref class AddObjectForm : public System::Windows::Forms::Form, public IAddObjectView
 	{
 	public:
-		AddObjectForm(void)
+		AddObjectForm(IAnnotationView^ view) : m_annotation_view(view)
 		{
 			InitializeComponent();
 			//
 			//TODO: W tym miejscu dodaj kod konstruktora
 			//
 		}
+
+        void AddObject(System::String^ name) override
+        {
+            m_annotation_view->AddObject(name);
+        }
+
+        virtual event SendObjectData^ ObjectAdded {
+            void add(SendObjectData ^ d) {
+                m_object_added_event += d;
+            }
+            void remove(SendObjectData ^ d) {
+                m_object_added_event -= d;
+            }
+            void raise(System::String^ name, double aspect_ratio) {
+                SendObjectData^ tmp = m_object_added_event;
+                if (tmp) {
+                    tmp->Invoke(name, aspect_ratio);
+                }
+            }
+        }
 
 	protected:
 		/// <summary>
@@ -36,14 +59,18 @@ namespace AnnotationTool {
 		}
     private: System::Windows::Forms::Label^  label1;
     private: System::Windows::Forms::Label^  label2;
-    private: System::Windows::Forms::CheckBox^  checkBox1;
+    private: System::Windows::Forms::CheckBox^  aspectRatioCheckBox;
+
     private: System::Windows::Forms::Label^  label3;
     private: System::Windows::Forms::Label^  label4;
     private: System::Windows::Forms::Label^  label5;
-    private: System::Windows::Forms::TextBox^  textBox1;
+    private: System::Windows::Forms::TextBox^  objectNameTextBox;
+
     private: System::Windows::Forms::RichTextBox^  richTextBox1;
-    private: System::Windows::Forms::TextBox^  textBox2;
-    private: System::Windows::Forms::TextBox^  textBox3;
+    private: System::Windows::Forms::TextBox^  widthTextBox;
+    private: System::Windows::Forms::TextBox^  heightTextBox;
+
+
     private: System::Windows::Forms::Button^  OKButton;
     private: System::Windows::Forms::Button^  cancelButton;
     protected:
@@ -54,6 +81,9 @@ namespace AnnotationTool {
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
+        SendObjectData^ m_object_added_event;
+        IAnnotationView^ m_annotation_view;
+
 #pragma region Windows Form Designer generated code
 		/// <summary>
 		/// Metoda wymagana do obs³ugi projektanta — nie nale¿y modyfikowaæ
@@ -63,14 +93,14 @@ namespace AnnotationTool {
 		{
             this->label1 = (gcnew System::Windows::Forms::Label());
             this->label2 = (gcnew System::Windows::Forms::Label());
-            this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+            this->aspectRatioCheckBox = (gcnew System::Windows::Forms::CheckBox());
             this->label3 = (gcnew System::Windows::Forms::Label());
             this->label4 = (gcnew System::Windows::Forms::Label());
             this->label5 = (gcnew System::Windows::Forms::Label());
-            this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+            this->objectNameTextBox = (gcnew System::Windows::Forms::TextBox());
             this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
-            this->textBox2 = (gcnew System::Windows::Forms::TextBox());
-            this->textBox3 = (gcnew System::Windows::Forms::TextBox());
+            this->widthTextBox = (gcnew System::Windows::Forms::TextBox());
+            this->heightTextBox = (gcnew System::Windows::Forms::TextBox());
             this->OKButton = (gcnew System::Windows::Forms::Button());
             this->cancelButton = (gcnew System::Windows::Forms::Button());
             this->SuspendLayout();
@@ -93,15 +123,15 @@ namespace AnnotationTool {
             this->label2->TabIndex = 1;
             this->label2->Text = L"Description:";
             // 
-            // checkBox1
+            // aspectRatioCheckBox
             // 
-            this->checkBox1->AutoSize = true;
-            this->checkBox1->Location = System::Drawing::Point(31, 135);
-            this->checkBox1->Name = L"checkBox1";
-            this->checkBox1->Size = System::Drawing::Size(115, 17);
-            this->checkBox1->TabIndex = 2;
-            this->checkBox1->Text = L"Fixed Aspect Ratio";
-            this->checkBox1->UseVisualStyleBackColor = true;
+            this->aspectRatioCheckBox->AutoSize = true;
+            this->aspectRatioCheckBox->Location = System::Drawing::Point(31, 135);
+            this->aspectRatioCheckBox->Name = L"aspectRatioCheckBox";
+            this->aspectRatioCheckBox->Size = System::Drawing::Size(115, 17);
+            this->aspectRatioCheckBox->TabIndex = 2;
+            this->aspectRatioCheckBox->Text = L"Fixed Aspect Ratio";
+            this->aspectRatioCheckBox->UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -130,12 +160,12 @@ namespace AnnotationTool {
             this->label5->TabIndex = 5;
             this->label5->Text = L"Height:";
             // 
-            // textBox1
+            // objectNameTextBox
             // 
-            this->textBox1->Location = System::Drawing::Point(130, 20);
-            this->textBox1->Name = L"textBox1";
-            this->textBox1->Size = System::Drawing::Size(350, 20);
-            this->textBox1->TabIndex = 6;
+            this->objectNameTextBox->Location = System::Drawing::Point(130, 20);
+            this->objectNameTextBox->Name = L"objectNameTextBox";
+            this->objectNameTextBox->Size = System::Drawing::Size(350, 20);
+            this->objectNameTextBox->TabIndex = 6;
             // 
             // richTextBox1
             // 
@@ -145,19 +175,19 @@ namespace AnnotationTool {
             this->richTextBox1->TabIndex = 7;
             this->richTextBox1->Text = L"";
             // 
-            // textBox2
+            // widthTextBox
             // 
-            this->textBox2->Location = System::Drawing::Point(196, 152);
-            this->textBox2->Name = L"textBox2";
-            this->textBox2->Size = System::Drawing::Size(39, 20);
-            this->textBox2->TabIndex = 8;
+            this->widthTextBox->Location = System::Drawing::Point(196, 152);
+            this->widthTextBox->Name = L"widthTextBox";
+            this->widthTextBox->Size = System::Drawing::Size(39, 20);
+            this->widthTextBox->TabIndex = 8;
             // 
-            // textBox3
+            // heightTextBox
             // 
-            this->textBox3->Location = System::Drawing::Point(300, 152);
-            this->textBox3->Name = L"textBox3";
-            this->textBox3->Size = System::Drawing::Size(41, 20);
-            this->textBox3->TabIndex = 9;
+            this->heightTextBox->Location = System::Drawing::Point(300, 152);
+            this->heightTextBox->Name = L"heightTextBox";
+            this->heightTextBox->Size = System::Drawing::Size(41, 20);
+            this->heightTextBox->TabIndex = 9;
             // 
             // OKButton
             // 
@@ -167,6 +197,7 @@ namespace AnnotationTool {
             this->OKButton->TabIndex = 10;
             this->OKButton->Text = L"OK";
             this->OKButton->UseVisualStyleBackColor = true;
+            this->OKButton->Click += gcnew System::EventHandler(this, &AddObjectForm::OKButton_Click);
             // 
             // cancelButton
             // 
@@ -176,6 +207,7 @@ namespace AnnotationTool {
             this->cancelButton->TabIndex = 11;
             this->cancelButton->Text = L"Cancel";
             this->cancelButton->UseVisualStyleBackColor = true;
+            this->cancelButton->Click += gcnew System::EventHandler(this, &AddObjectForm::cancelButton_Click);
             // 
             // AddObjectForm
             // 
@@ -184,14 +216,14 @@ namespace AnnotationTool {
             this->ClientSize = System::Drawing::Size(492, 216);
             this->Controls->Add(this->cancelButton);
             this->Controls->Add(this->OKButton);
-            this->Controls->Add(this->textBox3);
-            this->Controls->Add(this->textBox2);
+            this->Controls->Add(this->heightTextBox);
+            this->Controls->Add(this->widthTextBox);
             this->Controls->Add(this->richTextBox1);
-            this->Controls->Add(this->textBox1);
+            this->Controls->Add(this->objectNameTextBox);
             this->Controls->Add(this->label5);
             this->Controls->Add(this->label4);
             this->Controls->Add(this->label3);
-            this->Controls->Add(this->checkBox1);
+            this->Controls->Add(this->aspectRatioCheckBox);
             this->Controls->Add(this->label2);
             this->Controls->Add(this->label1);
             this->Name = L"AddObjectForm";
@@ -201,5 +233,16 @@ namespace AnnotationTool {
 
         }
 #pragma endregion
-	};
+    private: System::Void OKButton_Click(System::Object^  sender, System::EventArgs^  e) {
+        double aspect_ratio = 0.0;
+        if (this->aspectRatioCheckBox->Checked) {
+            // TODO: calculate aspect ratio
+        }
+        this->ObjectAdded(this->objectNameTextBox->Text, aspect_ratio);
+        this->Close();
+    }
+private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
+    this->Close();
+}
+};
 }

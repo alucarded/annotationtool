@@ -4,9 +4,13 @@
 
 #include "AddFolderForm.h"
 #include "AddFolderPresenter.h"
+#include "AddObjectForm.h"
+#include "AddObjectPresenter.h"
 #include "IAnnotationView.h"
 #include "NewProjectForm.h"
 #include "NewProjectPresenter.h"
+
+#include "Utilities.h"
 
 #include "AnnotationModel.h" // unmanaged
 
@@ -27,7 +31,7 @@ namespace AnnotationTool {
 	public ref class AnnotationForm : public System::Windows::Forms::Form, public IAnnotationView
 	{
 	public:
-		AnnotationForm(AnnotationModel * model) : m_model(model)
+		AnnotationForm(AnnotationModel * model) : m_model(model), m_current_image_path(nullptr), m_mouse_down(false), m_start_x(0), m_start_y(0), m_end_x(0), m_end_y(0)
 		{
 			InitializeComponent();
 
@@ -49,12 +53,21 @@ namespace AnnotationTool {
             projectNode->Name = L"ProjectNode";
             projectNode->Text = L"Project";
             this->treeView1->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) { projectNode });
+
+            // Initialize Save File Dialog
+            this->saveFileDialog1->Filter = "XML files (*.xml)|*.xml|YAML files (*.yaml, *.yml)|*.yaml,*.yml|All files (*.*)|*.*";
+            this->saveFileDialog1->FilterIndex = 3;
 		}
 
         // IAnnotationView
         void UpdateProject(System::String^ name, System::String^ description, int mode) override
         {
             treeView1->Nodes[0]->Text = name;
+        }
+
+        void AddObject(System::String^ name) override
+        {
+            objectsNode->Nodes->Add(gcnew TreeNode(name));
         }
 
         void AddPaths(System::String^ path, System::Collections::ArrayList^ image_names, bool is_recursive) override
@@ -74,32 +87,47 @@ namespace AnnotationTool {
             this->pictureBox1->Image = image;
         }
 
-        virtual event SetObject^ ObjectNodeSelected {
-            void add(SetObject ^ d) {
-                m_set_object_event += d;
+        virtual event ObjectSet^ ObjectNodeSelected {
+            void add(ObjectSet ^ d) {
+                m_object_set_event += d;
             }
-            void remove(SetObject ^ d) {
-                m_set_object_event -= d;
+            void remove(ObjectSet ^ d) {
+                m_object_set_event -= d;
             }
             void raise(System::String^ name) {
-                SetObject^ tmp = m_set_object_event;
+                ObjectSet^ tmp = m_object_set_event;
                 if (tmp) {
                     tmp->Invoke(name);
                 }
             }
         }
 
-        virtual event SetImage^ ImageNodeSelected {
-            void add(SetImage ^ d) {
-                m_set_image_event += d;
+        virtual event ImageSet^ ImageNodeSelected {
+            void add(ImageSet ^ d) {
+                m_image_set_event += d;
             }
-            void remove(SetImage ^ d) {
-                m_set_image_event -= d;
+            void remove(ImageSet ^ d) {
+                m_image_set_event -= d;
             }
             void raise(System::String^ name) {
-                SetImage^ tmp = m_set_image_event;
+                ImageSet^ tmp = m_image_set_event;
                 if (tmp) {
                     tmp->Invoke(name);
+                }
+            }
+        }
+
+        virtual event AnnotationAdded^ AnnotationDrawn {
+            void add(AnnotationAdded ^ d) {
+                m_annotation_added_event += d;
+            }
+            void remove(AnnotationAdded ^ d) {
+                m_annotation_added_event -= d;
+            }
+            void raise(int x, int y, int w, int h) {
+                AnnotationAdded^ tmp = m_annotation_added_event;
+                if (tmp) {
+                    tmp->Invoke(x, y, w, h);
                 }
             }
         }
@@ -148,8 +176,17 @@ namespace AnnotationTool {
         System::Windows::Forms::TreeNode^  projectNode;
 
         AnnotationModel * m_model;
-        SetObject^ m_set_object_event;
-        SetImage^ m_set_image_event;
+        ObjectSet^ m_object_set_event;
+        ImageSet^ m_image_set_event;
+        AnnotationAdded^ m_annotation_added_event;
+        String^ m_current_image_path;
+
+        // Fields associated with region selection
+        bool m_mouse_down;
+        int m_start_x;
+        int m_start_y;
+        int m_end_x;
+        int m_end_y;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -217,6 +254,7 @@ namespace AnnotationTool {
             this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::AutoSize;
             this->pictureBox1->TabIndex = 1;
             this->pictureBox1->TabStop = false;
+            this->pictureBox1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &AnnotationForm::pictureBox1_Paint);
             this->pictureBox1->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &AnnotationForm::pictureBox1_MouseDown);
             this->pictureBox1->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &AnnotationForm::pictureBox1_MouseMove);
             this->pictureBox1->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &AnnotationForm::pictureBox1_MouseUp);
@@ -246,38 +284,39 @@ namespace AnnotationTool {
             // newToolStripMenuItem
             // 
             this->newToolStripMenuItem->Name = L"newToolStripMenuItem";
-            this->newToolStripMenuItem->Size = System::Drawing::Size(123, 22);
+            this->newToolStripMenuItem->Size = System::Drawing::Size(152, 22);
             this->newToolStripMenuItem->Text = L"New";
             this->newToolStripMenuItem->Click += gcnew System::EventHandler(this, &AnnotationForm::newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-            this->openToolStripMenuItem->Size = System::Drawing::Size(123, 22);
+            this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
             this->openToolStripMenuItem->Text = L"Open..";
             // 
             // saveToolStripMenuItem
             // 
             this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-            this->saveToolStripMenuItem->Size = System::Drawing::Size(123, 22);
+            this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
             this->saveToolStripMenuItem->Text = L"Save";
+            this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &AnnotationForm::saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this->saveAsToolStripMenuItem->Name = L"saveAsToolStripMenuItem";
-            this->saveAsToolStripMenuItem->Size = System::Drawing::Size(123, 22);
+            this->saveAsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
             this->saveAsToolStripMenuItem->Text = L"Save As...";
             // 
             // exportToolStripMenuItem
             // 
             this->exportToolStripMenuItem->Name = L"exportToolStripMenuItem";
-            this->exportToolStripMenuItem->Size = System::Drawing::Size(123, 22);
+            this->exportToolStripMenuItem->Size = System::Drawing::Size(152, 22);
             this->exportToolStripMenuItem->Text = L"Export...";
             // 
             // exitToolStripMenuItem
             // 
             this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-            this->exitToolStripMenuItem->Size = System::Drawing::Size(123, 22);
+            this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
             this->exitToolStripMenuItem->Text = L"Exit";
             // 
             // editToolStripMenuItem
@@ -299,6 +338,10 @@ namespace AnnotationTool {
             this->treeView1->Size = System::Drawing::Size(234, 579);
             this->treeView1->TabIndex = 3;
             this->treeView1->AfterSelect += gcnew System::Windows::Forms::TreeViewEventHandler(this, &AnnotationForm::treeView1_AfterSelect);
+            // 
+            // saveFileDialog1
+            // 
+            this->saveFileDialog1->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &AnnotationForm::saveFileDialog1_FileOk);
             // 
             // notifyIcon1
             // 
@@ -331,18 +374,15 @@ namespace AnnotationTool {
         TreeNode^ curr = e->Node;
         // This is quite hacky, but we need to know if this is folder node or object node.
         // Perhaps creating separate tree views for objects and folders would be better?
-        while (nullptr != curr->Parent) {
-            if (curr->Parent == foldersNode) {
-                // curr is folder node
-                String^ path = Path::Combine(curr->Text, e->Node->Text);
-                this->ImageNodeSelected(path);
-                break;
-            }
-            if (curr->Parent == objectsNode) {
-                this->ObjectNodeSelected(curr->Text);
-                break;
-            }
-            curr = curr->Parent;
+        if (curr->Parent != nullptr && curr->Parent->Parent == foldersNode) {
+            String^ path = Path::Combine(curr->Parent->Text, curr->Text);
+            this->ImageNodeSelected(path);
+            m_current_image_path = path;
+            return;
+        }
+        if (curr->Parent == objectsNode) {
+            this->ObjectNodeSelected(curr->Text);
+            return;
         }
 	}
 
@@ -352,8 +392,9 @@ private: System::Void newToolStripMenuItem_Click(System::Object^  sender, System
 	new_form->ShowDialog();
 }
 private: System::Void addObjectToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-    // TODO: add object: update both View (here) and Model part
-    objectsNode->Nodes->Add(gcnew TreeNode(L"Object"));
+    AddObjectForm^ new_form = gcnew AddObjectForm(this);
+    AddObjectPresenter^ new_presenter = gcnew AddObjectPresenter(new_form, m_model);
+    new_form->ShowDialog();
 }
 
 private: System::Void addFolderToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -361,12 +402,64 @@ private: System::Void addFolderToolStripMenuItem_Click(System::Object^  sender, 
     AddFolderPresenter^ new_presenter = gcnew AddFolderPresenter(new_form, m_model);
     new_form->ShowDialog();
 }
+
 private: System::Void pictureBox1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-    
+    this->m_start_x = e->X;
+    this->m_start_y = e->Y;
+    this->m_end_x = e->X;
+    this->m_end_y = e->Y;
+    this->m_mouse_down = true;
 }
+
 private: System::Void pictureBox1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+    this->m_mouse_down = false;
+    this->m_end_x = e->X;
+    this->m_end_y = e->Y;
+    this->pictureBox1->Invalidate();
+    // Cache annotation
+    int w = this->m_end_x - this->m_start_x;
+    int h = this->m_end_y - this->m_start_y;
+    this->AnnotationDrawn(this->m_start_x, this->m_start_y, w, h);
 }
+
 private: System::Void pictureBox1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+    if (this->m_mouse_down) {
+        this->m_end_x = e->X;
+        this->m_end_y = e->Y;
+        this->pictureBox1->Invalidate();
+    }
+}
+
+private: System::Void pictureBox1_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
+    using namespace System::Drawing;
+    Pen^ blackPen = gcnew Pen(Color::Black, 3.0f);
+
+    if (this->m_mouse_down)
+    {
+        int w = this->m_end_x - this->m_start_x;
+        int h = this->m_end_y - this->m_start_y;
+        e->Graphics->DrawRectangle(blackPen, Rectangle(this->m_start_x, this->m_start_y, w, h));
+    }
+
+    // Draw all annotations
+    // TODO: here we depend upon concrete class, it should be an interface
+    if (nullptr != m_current_image_path) {
+        std::vector<Annotation> annotations;
+        m_model->GetAnnotationsForImage(MarshalString(m_current_image_path), annotations);
+        for (const Annotation& an : annotations) {
+            // TODO: assign color to object ? write object name at bounding box ?
+            e->Graphics->DrawRectangle(blackPen, Rectangle(an.m_x, an.m_y, an.m_width, an.m_height));
+        }
+    }
+}
+private: System::Void saveFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+}
+private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+    using System::Windows::Forms::DialogResult;
+    DialogResult result = this->saveFileDialog1->ShowDialog();
+    if (DialogResult::OK == result) {
+        m_model->SaveAnnotations(MarshalString(this->saveFileDialog1->FileName));
+    }
 }
 };
 }

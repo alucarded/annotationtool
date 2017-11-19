@@ -3,7 +3,15 @@
 
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
+
+struct Annotation {
+    Annotation(const std::string& object_name, int x, int y, int w, int h)
+        : m_object_name(object_name), m_x(x), m_y(y), m_width(w), m_height(h) { }
+    std::string m_object_name;
+    int m_x, m_y;
+    int m_width, m_height;
+};
 
 class AnnotationModel
 {
@@ -16,28 +24,30 @@ public:
     };
 
     struct Object {
-        Object(std::string name, bool fixed_as = false, int w_as = 1, int h_as = 1)
-            : m_name(name), m_fixed_aspect_ratio(fixed_as), m_width_aspect(w_as), m_height_aspect(h_as) { }
+        Object(std::string name, std::string desc, double aspect_ratio = 0.0)
+            : m_name(name), m_desc(desc), m_aspect_ratio(aspect_ratio) { }
 
         std::string m_name;
-        bool m_fixed_aspect_ratio;
-        int m_width_aspect;
-        int m_height_aspect;
+        std::string m_desc;
+        double m_aspect_ratio;
     };
 
-    struct Annotation {
-        int m_object_id; // ID in objects vector
-        int x, y;
-        int width, height;
-    };
+    void GetAnnotationsForImage(const std::string& path, std::vector<Annotation>& annotations);
 
     void SetProjectDetails(const std::string& name, const std::string& desc, int mode);
     void SetCurrentObject(const std::string& name);
+    void SetImage(const std::string& name);
+
+    void AddObject(const std::string& name, double aspect_ratio);
+    void AddAnnotation(int x, int y, int w, int h);
+
+    void SaveAnnotations(const std::string& path);
 private:
     std::string m_project_name;
     std::string m_description;
     Mode m_mode;
-    std::vector<Object> m_objects;
-    std::vector<std::string> m_folders; // absolute path here
-    std::multimap<std::string, Annotation> m_image_annotations; // maps absolute image path to annotations
+    std::string m_current_object;
+    std::string m_current_image_path;
+    std::unordered_map<std::string, Object> m_objects;
+    std::unordered_multimap<std::string, Annotation> m_image_annotations; // maps absolute image path to annotations
 };
