@@ -32,7 +32,7 @@ public:
     };
 
     void SetProjectDetails(const std::string& name, const std::string& desc, int mode);
-
+    void SetCurrentObject(const std::string& name);
 private:
     std::string m_project_name;
     std::string m_description;

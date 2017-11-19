@@ -17,3 +17,8 @@ void AnnotationModel::SetProjectDetails(const std::string& name, const std::stri
     m_description = desc;
     m_mode = static_cast<Mode>(mode); // TODO: choose mode per object?
 }
+
+void AnnotationModel::SetCurrentObject(const std::string & name)
+{
+    // TODO:
+}

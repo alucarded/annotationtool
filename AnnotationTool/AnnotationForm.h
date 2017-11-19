@@ -67,6 +67,43 @@ namespace AnnotationTool {
             foldersNode->Nodes->Add(folder);
         }
 
+        void DisplayImage(System::Drawing::Image^ image) override
+        {
+            // TODO: scale image if it is too big?
+            // TODO: adjust window size to picture box
+            this->pictureBox1->Image = image;
+        }
+
+        virtual event SetObject^ ObjectNodeSelected {
+            void add(SetObject ^ d) {
+                m_set_object_event += d;
+            }
+            void remove(SetObject ^ d) {
+                m_set_object_event -= d;
+            }
+            void raise(System::String^ name) {
+                SetObject^ tmp = m_set_object_event;
+                if (tmp) {
+                    tmp->Invoke(name);
+                }
+            }
+        }
+
+        virtual event SetImage^ ImageNodeSelected {
+            void add(SetImage ^ d) {
+                m_set_image_event += d;
+            }
+            void remove(SetImage ^ d) {
+                m_set_image_event -= d;
+            }
+            void raise(System::String^ name) {
+                SetImage^ tmp = m_set_image_event;
+                if (tmp) {
+                    tmp->Invoke(name);
+                }
+            }
+        }
+
 	protected:
 		/// <summary>
 		/// Wyczyœæ wszystkie u¿ywane zasoby.
@@ -111,6 +148,8 @@ namespace AnnotationTool {
         System::Windows::Forms::TreeNode^  projectNode;
 
         AnnotationModel * m_model;
+        SetObject^ m_set_object_event;
+        SetImage^ m_set_image_event;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -175,8 +214,12 @@ namespace AnnotationTool {
             this->pictureBox1->Location = System::Drawing::Point(252, 34);
             this->pictureBox1->Name = L"pictureBox1";
             this->pictureBox1->Size = System::Drawing::Size(683, 579);
+            this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::AutoSize;
             this->pictureBox1->TabIndex = 1;
             this->pictureBox1->TabStop = false;
+            this->pictureBox1->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &AnnotationForm::pictureBox1_MouseDown);
+            this->pictureBox1->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &AnnotationForm::pictureBox1_MouseMove);
+            this->pictureBox1->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &AnnotationForm::pictureBox1_MouseUp);
             // 
             // menuStrip1
             // 
@@ -284,7 +327,25 @@ namespace AnnotationTool {
         }
 #pragma endregion
 	private: System::Void treeView1_AfterSelect(System::Object^  sender, System::Windows::Forms::TreeViewEventArgs^  e) {
+    using namespace System::IO;
+        TreeNode^ curr = e->Node;
+        // This is quite hacky, but we need to know if this is folder node or object node.
+        // Perhaps creating separate tree views for objects and folders would be better?
+        while (nullptr != curr->Parent) {
+            if (curr->Parent == foldersNode) {
+                // curr is folder node
+                String^ path = Path::Combine(curr->Text, e->Node->Text);
+                this->ImageNodeSelected(path);
+                break;
+            }
+            if (curr->Parent == objectsNode) {
+                this->ObjectNodeSelected(curr->Text);
+                break;
+            }
+            curr = curr->Parent;
+        }
 	}
+
 private: System::Void newToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	NewProjectForm^ new_form = gcnew NewProjectForm(this);
     NewProjectPresenter^ new_presenter = gcnew NewProjectPresenter(new_form, m_model);
@@ -299,6 +360,13 @@ private: System::Void addFolderToolStripMenuItem_Click(System::Object^  sender, 
     AddFolderForm^ new_form = gcnew AddFolderForm(this);
     AddFolderPresenter^ new_presenter = gcnew AddFolderPresenter(new_form, m_model);
     new_form->ShowDialog();
+}
+private: System::Void pictureBox1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+    
+}
+private: System::Void pictureBox1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+}
+private: System::Void pictureBox1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 }
 };
 }
