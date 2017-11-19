@@ -59,9 +59,9 @@ void AnnotationModel::SaveAnnotations(const std::string & path)
         //std::cout << "bucket #" << i << " contains:";
         auto local_it = m_image_annotations.begin(i);
         if (m_image_annotations.end(i) == local_it) {
-            break;
+            continue;
         }
-        std::string path = local_it->first;
+        const std::string& path = local_it->first;
         fs << "{:" <<"path" << path;
         fs << "annotations" << "[";
         for (; local_it != m_image_annotations.end(i); ++local_it) {
