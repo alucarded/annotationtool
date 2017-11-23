@@ -187,7 +187,8 @@ namespace AnnotationTool {
         int m_start_y;
         int m_end_x;
         int m_end_y;
-        // TODO: better also have boolean fixed_aspect_ratio ? (also on model side)
+private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
+         // TODO: better also have boolean fixed_aspect_ratio ? (also on model side)
         double m_annotation_aspect_ratio;
 
 #pragma region Windows Form Designer generated code
@@ -216,6 +217,7 @@ namespace AnnotationTool {
             this->treeView1 = (gcnew System::Windows::Forms::TreeView());
             this->saveFileDialog1 = (gcnew System::Windows::Forms::SaveFileDialog());
             this->notifyIcon1 = (gcnew System::Windows::Forms::NotifyIcon(this->components));
+            this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
             this->ctxMenuObject->SuspendLayout();
             this->ctxMenuFolder->SuspendLayout();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
@@ -295,6 +297,7 @@ namespace AnnotationTool {
             this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
             this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
             this->openToolStripMenuItem->Text = L"Open..";
+            this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &AnnotationForm::openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
@@ -349,6 +352,10 @@ namespace AnnotationTool {
             // 
             this->notifyIcon1->Text = L"notifyIcon1";
             this->notifyIcon1->Visible = true;
+            // 
+            // openFileDialog1
+            // 
+            this->openFileDialog1->FileName = L"openFileDialog1";
             // 
             // AnnotationForm
             // 
@@ -479,7 +486,14 @@ private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, Syste
     using System::Windows::Forms::DialogResult;
     DialogResult result = this->saveFileDialog1->ShowDialog();
     if (DialogResult::OK == result) {
-        m_model->SaveAnnotations(MarshalString(this->saveFileDialog1->FileName));
+        m_model->SaveProject(MarshalString(this->saveFileDialog1->FileName));
+    }
+}
+private: System::Void openToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+    using System::Windows::Forms::DialogResult;
+    DialogResult result = this->openFileDialog1->ShowDialog();
+    if (DialogResult::OK == result) {
+        m_model->LoadProject(MarshalString(this->openFileDialog1->FileName));
     }
 }
 };

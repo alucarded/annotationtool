@@ -16,6 +16,7 @@ void AddFolderPresenter::OnNewFolderAdded(System::String ^ root_path, bool is_re
     System::Collections::ArrayList^ image_paths = gcnew ArrayList();
     GetImageFilesInFolder(root_path, image_paths, is_recursive);
     m_view->AddPaths(root_path, image_paths, is_recursive);
+    m_model->AddFolder(MarshalString(root_path), is_recursive);
 }
 
 // TODO: This functionality should go to separate model class ?

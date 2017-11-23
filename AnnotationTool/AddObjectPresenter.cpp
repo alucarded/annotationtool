@@ -13,9 +13,8 @@ AddObjectPresenter::~AddObjectPresenter()
 
 }
 
-void AddObjectPresenter::OnObjectAdded(System::String ^ name, double aspect_ratio)
+void AddObjectPresenter::OnObjectAdded(System::String ^ name, System::String ^ description, double aspect_ratio)
 {
-    std::string std_name(MarshalString(name));
-    m_model->AddObject(std_name, aspect_ratio);
-    m_view->AddObject(name);
+    m_model->AddObject(MarshalString(name), MarshalString(description), aspect_ratio);
+    m_view->AddObject(name, description);
 }

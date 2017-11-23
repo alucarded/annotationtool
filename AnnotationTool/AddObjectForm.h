@@ -26,8 +26,9 @@ namespace AnnotationTool {
 			//
 		}
 
-        void AddObject(System::String^ name) override
+        void AddObject(System::String^ name, System::String^ description) override
         {
+        // TODO: pass description (display it as tooltip?)
             m_annotation_view->AddObject(name);
         }
 
@@ -38,10 +39,10 @@ namespace AnnotationTool {
             void remove(SendObjectData ^ d) {
                 m_object_added_event -= d;
             }
-            void raise(System::String^ name, double aspect_ratio) {
+            void raise(System::String^ name, System::String^ description, double aspect_ratio) {
                 SendObjectData^ tmp = m_object_added_event;
                 if (tmp) {
-                    tmp->Invoke(name, aspect_ratio);
+                    tmp->Invoke(name, description, aspect_ratio);
                 }
             }
         }
@@ -65,8 +66,9 @@ namespace AnnotationTool {
     private: System::Windows::Forms::Label^  label4;
     private: System::Windows::Forms::Label^  label5;
     private: System::Windows::Forms::TextBox^  objectNameTextBox;
+    private: System::Windows::Forms::RichTextBox^  descriptionTextBox;
 
-    private: System::Windows::Forms::RichTextBox^  richTextBox1;
+
     private: System::Windows::Forms::TextBox^  widthTextBox;
     private: System::Windows::Forms::TextBox^  heightTextBox;
 
@@ -98,7 +100,7 @@ namespace AnnotationTool {
             this->label4 = (gcnew System::Windows::Forms::Label());
             this->label5 = (gcnew System::Windows::Forms::Label());
             this->objectNameTextBox = (gcnew System::Windows::Forms::TextBox());
-            this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
+            this->descriptionTextBox = (gcnew System::Windows::Forms::RichTextBox());
             this->widthTextBox = (gcnew System::Windows::Forms::TextBox());
             this->heightTextBox = (gcnew System::Windows::Forms::TextBox());
             this->OKButton = (gcnew System::Windows::Forms::Button());
@@ -168,13 +170,13 @@ namespace AnnotationTool {
             this->objectNameTextBox->Size = System::Drawing::Size(350, 20);
             this->objectNameTextBox->TabIndex = 6;
             // 
-            // richTextBox1
+            // descriptionTextBox
             // 
-            this->richTextBox1->Location = System::Drawing::Point(130, 52);
-            this->richTextBox1->Name = L"richTextBox1";
-            this->richTextBox1->Size = System::Drawing::Size(350, 77);
-            this->richTextBox1->TabIndex = 7;
-            this->richTextBox1->Text = L"";
+            this->descriptionTextBox->Location = System::Drawing::Point(130, 52);
+            this->descriptionTextBox->Name = L"descriptionTextBox";
+            this->descriptionTextBox->Size = System::Drawing::Size(350, 77);
+            this->descriptionTextBox->TabIndex = 7;
+            this->descriptionTextBox->Text = L"";
             // 
             // widthTextBox
             // 
@@ -221,7 +223,7 @@ namespace AnnotationTool {
             this->Controls->Add(this->OKButton);
             this->Controls->Add(this->heightTextBox);
             this->Controls->Add(this->widthTextBox);
-            this->Controls->Add(this->richTextBox1);
+            this->Controls->Add(this->descriptionTextBox);
             this->Controls->Add(this->objectNameTextBox);
             this->Controls->Add(this->label5);
             this->Controls->Add(this->label4);
@@ -252,7 +254,7 @@ namespace AnnotationTool {
                 Console::WriteLine("Width x Height - {0} x {1}: Overflow", this->widthTextBox->Text, this->heightTextBox->Text);
             }
         }
-        this->ObjectAdded(this->objectNameTextBox->Text, aspect_ratio);
+        this->ObjectAdded(this->objectNameTextBox->Text, this->descriptionTextBox->Text, aspect_ratio);
         this->Close();
     }
 private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
