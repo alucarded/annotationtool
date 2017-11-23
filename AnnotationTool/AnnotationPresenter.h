@@ -11,7 +11,7 @@ public:
     AnnotationPresenter(IAnnotationView^ view, AnnotationModel * model);
     ~AnnotationPresenter();
 
-    void OnObjectNodeSelected(System::String^ obj_name);
+    void OnObjectNodeSelected(System::String^ obj_name, double % aspect_ratio);
     void OnImageNodeSelected(System::String^ image_path);
     void OnAnnotationDrawn(int x, int y, int w, int h);
 private:

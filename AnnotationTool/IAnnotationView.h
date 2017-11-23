@@ -1,6 +1,6 @@
 #pragma once
 
-public delegate void ObjectSet(System::String^ obj_name);
+public delegate void ObjectSet(System::String^ obj_name, double % aspect_ratio);
 public delegate void ImageSet(System::String^ image_path);
 public delegate void AnnotationAdded(int x, int y, int w, int h);
 

@@ -132,6 +132,7 @@ namespace AnnotationTool {
             this->aspectRatioCheckBox->TabIndex = 2;
             this->aspectRatioCheckBox->Text = L"Fixed Aspect Ratio";
             this->aspectRatioCheckBox->UseVisualStyleBackColor = true;
+            this->aspectRatioCheckBox->CheckedChanged += gcnew System::EventHandler(this, &AddObjectForm::aspectRatioCheckBox_CheckedChanged);
             // 
             // label3
             // 
@@ -177,6 +178,7 @@ namespace AnnotationTool {
             // 
             // widthTextBox
             // 
+            this->widthTextBox->Enabled = false;
             this->widthTextBox->Location = System::Drawing::Point(196, 152);
             this->widthTextBox->Name = L"widthTextBox";
             this->widthTextBox->Size = System::Drawing::Size(39, 20);
@@ -184,6 +186,7 @@ namespace AnnotationTool {
             // 
             // heightTextBox
             // 
+            this->heightTextBox->Enabled = false;
             this->heightTextBox->Location = System::Drawing::Point(300, 152);
             this->heightTextBox->Name = L"heightTextBox";
             this->heightTextBox->Size = System::Drawing::Size(41, 20);
@@ -236,13 +239,35 @@ namespace AnnotationTool {
     private: System::Void OKButton_Click(System::Object^  sender, System::EventArgs^  e) {
         double aspect_ratio = 0.0;
         if (this->aspectRatioCheckBox->Checked) {
-            // TODO: calculate aspect ratio
+            try {
+                int w = Int32::Parse(this->widthTextBox->Text);
+                int h = Int32::Parse(this->heightTextBox->Text);
+                Console::WriteLine("Width: {0}, Height: {1}", w, h);
+                aspect_ratio = static_cast<double>(w)/static_cast<double>(h);
+            }
+            catch (FormatException^ e) {
+                Console::WriteLine("Width x Height - {0} x {1}: Bad Format", this->widthTextBox->Text, this->heightTextBox->Text);
+            }
+            catch (OverflowException^ e) {
+                Console::WriteLine("Width x Height - {0} x {1}: Overflow", this->widthTextBox->Text, this->heightTextBox->Text);
+            }
         }
         this->ObjectAdded(this->objectNameTextBox->Text, aspect_ratio);
         this->Close();
     }
 private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
     this->Close();
+}
+private: System::Void aspectRatioCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+    if (this->aspectRatioCheckBox->Checked) {
+        this->widthTextBox->Enabled = true;
+        this->heightTextBox->Enabled = true;
+    } else {
+        this->widthTextBox->Text = L"";
+        this->heightTextBox->Text = L"";
+        this->widthTextBox->Enabled = false;
+        this->heightTextBox->Enabled = false;
+    }
 }
 };
 }

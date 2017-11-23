@@ -18,12 +18,14 @@ AnnotationPresenter::~AnnotationPresenter()
     delete m_model;
 }
 
-void AnnotationPresenter::OnObjectNodeSelected(System::String^ obj_name)
+void AnnotationPresenter::OnObjectNodeSelected(System::String^ obj_name, double % aspect_ratio)
 {
     std::string name;
+    double ar;
     MarshalString(obj_name, name);
     m_model->SetCurrentObject(name);
-    // TODO: update object on view side (aspect ratio, etc.)
+    m_model->GetAspectRatio(name, ar);
+    aspect_ratio = ar;
 }
 
 void AnnotationPresenter::OnImageNodeSelected(System::String^ image_path)

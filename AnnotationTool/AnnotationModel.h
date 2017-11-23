@@ -33,6 +33,7 @@ public:
     };
 
     void GetAnnotationsForImage(const std::string& path, std::vector<Annotation>& annotations);
+    void GetAspectRatio(const std::string& object_name, double & aspect_ratio);
 
     void SetProjectDetails(const std::string& name, const std::string& desc, int mode);
     void SetCurrentObject(const std::string& name);

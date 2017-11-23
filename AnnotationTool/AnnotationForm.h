@@ -31,7 +31,7 @@ namespace AnnotationTool {
 	public ref class AnnotationForm : public System::Windows::Forms::Form, public IAnnotationView
 	{
 	public:
-		AnnotationForm(AnnotationModel * model) : m_model(model), m_current_image_path(nullptr), m_mouse_down(false), m_start_x(0), m_start_y(0), m_end_x(0), m_end_y(0)
+		AnnotationForm(AnnotationModel * model) : m_model(model), m_current_image_path(nullptr), m_mouse_down(false), m_start_x(0), m_start_y(0), m_end_x(0), m_end_y(0), m_annotation_aspect_ratio(0.0)
 		{
 			InitializeComponent();
 
@@ -94,10 +94,10 @@ namespace AnnotationTool {
             void remove(ObjectSet ^ d) {
                 m_object_set_event -= d;
             }
-            void raise(System::String^ name) {
+            void raise(System::String^ name, double % aspect_ratio) {
                 ObjectSet^ tmp = m_object_set_event;
                 if (tmp) {
-                    tmp->Invoke(name);
+                    tmp->Invoke(name, aspect_ratio);
                 }
             }
         }
@@ -187,6 +187,8 @@ namespace AnnotationTool {
         int m_start_y;
         int m_end_x;
         int m_end_y;
+        // TODO: better also have boolean fixed_aspect_ratio ? (also on model side)
+        double m_annotation_aspect_ratio;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -381,7 +383,7 @@ namespace AnnotationTool {
             return;
         }
         if (curr->Parent == objectsNode) {
-            this->ObjectNodeSelected(curr->Text);
+            this->ObjectNodeSelected(curr->Text, m_annotation_aspect_ratio);
             return;
         }
 	}
@@ -411,10 +413,30 @@ private: System::Void pictureBox1_MouseDown(System::Object^  sender, System::Win
     this->m_mouse_down = true;
 }
 
+private: System::Void calculateEndpoint(int x, int y) {
+    double ar = m_annotation_aspect_ratio;
+    if (ar > 0.0) {
+        int w = x - this->m_start_x;
+        int h = y - this->m_start_y;
+        int vw = h*ar;
+        if (vw <= w) {
+            this->m_end_x = this->m_start_x + vw;
+            this->m_end_y = y;
+        }
+        else {
+            int vh = round(static_cast<double>(w) / ar);
+            this->m_end_x = x;
+            this->m_end_y = this->m_start_y + vh;
+        }
+    }
+    else {
+        this->m_end_x = x;
+        this->m_end_y = y;
+    }
+}
 private: System::Void pictureBox1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
     this->m_mouse_down = false;
-    this->m_end_x = e->X;
-    this->m_end_y = e->Y;
+    calculateEndpoint(e->X, e->Y);
     this->pictureBox1->Invalidate();
     // Cache annotation
     int w = this->m_end_x - this->m_start_x;
@@ -424,8 +446,7 @@ private: System::Void pictureBox1_MouseUp(System::Object^  sender, System::Windo
 
 private: System::Void pictureBox1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
     if (this->m_mouse_down) {
-        this->m_end_x = e->X;
-        this->m_end_y = e->Y;
+        calculateEndpoint(e->X, e->Y);
         this->pictureBox1->Invalidate();
     }
 }

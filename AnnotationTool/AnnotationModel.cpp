@@ -20,6 +20,18 @@ void AnnotationModel::GetAnnotationsForImage(const std::string & path, std::vect
     }
 }
 
+void AnnotationModel::GetAspectRatio(const std::string& object_name, double & aspect_ratio)
+{
+    auto it = m_objects.find(object_name);
+    if (it == m_objects.end()) {
+        // TODO: should not happen, throw exception or show error popup
+        aspect_ratio = 0.0;
+        return;
+    }
+    aspect_ratio = it->second.m_aspect_ratio;
+
+}
+
 void AnnotationModel::SetProjectDetails(const std::string& name, const std::string& desc, int mode)
 {
     m_project_name = name;
