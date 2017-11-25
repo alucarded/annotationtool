@@ -21,20 +21,28 @@ std::string MarshalString(System::String ^ s) {
 System::Drawing::Bitmap^ Mat2Bitmap(cv::Mat & colorImage) {
     System::IntPtr ptr(colorImage.ptr());
     System::Drawing::Bitmap^ b;
-    switch (colorImage.type())
-    {
-    case CV_8UC3: // non-grayscale images are correctly displayed here
-        b = gcnew System::Drawing::Bitmap(colorImage.cols, colorImage.rows, colorImage.step,
-            System::Drawing::Imaging::PixelFormat::Format24bppRgb, ptr);
-        break;
-    case CV_8UC1: // grayscale images are incorrectly displayed here 
-        b = gcnew System::Drawing::Bitmap(colorImage.cols, colorImage.rows, colorImage.step,
-            System::Drawing::Imaging::PixelFormat::Format8bppIndexed, ptr);
-        break;
-    default:
-        b = gcnew System::Drawing::Bitmap(colorImage.cols, colorImage.rows, colorImage.step,
-            System::Drawing::Imaging::PixelFormat::Format24bppRgb, ptr);
-        break;
+    int stride = colorImage.step;
+    try {
+        switch (colorImage.type())
+        {
+        case CV_8UC3: // non-grayscale images are correctly displayed here
+           b = gcnew System::Drawing::Bitmap(colorImage.cols, colorImage.rows, stride,
+               System::Drawing::Imaging::PixelFormat::Format24bppRgb, ptr);
+           break;
+        case CV_8UC1: // grayscale images are incorrectly displayed here 
+            b = gcnew System::Drawing::Bitmap(colorImage.cols, colorImage.rows, stride,
+               System::Drawing::Imaging::PixelFormat::Format8bppIndexed, ptr);
+            break;
+        default:
+            b = gcnew System::Drawing::Bitmap(colorImage.cols, colorImage.rows, stride,
+                System::Drawing::Imaging::PixelFormat::Format24bppRgb, ptr);
+            break;
+        }
+    } catch (System::ArgumentException^ e) {
+        System::Windows::Forms::MessageBox::Show(
+            e->Message,
+            e->GetType()->Name, System::Windows::Forms::MessageBoxButtons::OK,
+            System::Windows::Forms::MessageBoxIcon::Error);
     }
     return b;
 }

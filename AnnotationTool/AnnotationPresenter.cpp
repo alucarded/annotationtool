@@ -30,15 +30,20 @@ void AnnotationPresenter::OnObjectNodeSelected(System::String^ obj_name, double 
 
 void AnnotationPresenter::OnImageNodeSelected(System::String^ image_path)
 {
+    std::string std_path = MarshalString(image_path);
+    System::Drawing::Image^ sys_img;
+#ifdef OPENCV_IMAGE_LOAD
     // TODO: opencv part should perhaps be moved somewhere else
     using namespace cv;
-    std::string std_path = MarshalString(image_path);
     Mat img = imread(std_path, IMREAD_COLOR);
     Mat display;
     convertScaleAbs(img, display);
-    System::Drawing::Bitmap^ bmp = Mat2Bitmap(display);
+    sys_img = safe_cast<System::Drawing::Image^>(Mat2Bitmap(display));
     display.addref(); // increase reference count to prevent premature image data disposal
-    m_view->DisplayImage(safe_cast<System::Drawing::Image^>(bmp));
+#else
+    sys_img = System::Drawing::Image::FromFile(image_path);
+#endif
+    m_view->DisplayImage(sys_img);
     m_model->SetImage(std_path);
 }
 
