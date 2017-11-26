@@ -98,13 +98,26 @@ bool IsExtensionSupported(const array<System::String^>^ supported, System::Strin
 
 array<System::String^>^ SupportedImageExtensions()
 {
+    array<System::String^>^ supported_image_extensions;
+#ifdef OPENCV_IMAGE_LOAD
     // Extensions supported in OpenCV
-    array<System::String^>^ supported_image_extensions = gcnew array<System::String^>{".bmp",
+    supported_image_extensions = gcnew array<System::String^>{".bmp",
         ".pbm", ".pgm", ".ppm",
         ".sr", ".ras",
         ".jpeg", ".jpg", ".jpe",
         ".jp2",
         ".tiff", ".tif",
         ".png"};
+#else
+    // TODO: this may be not complete - check
+    supported_image_extensions = gcnew array<System::String^>{".bmp",
+        ".emf",
+        ".exif",
+        ".jpeg", ".jpg", ".jpe",
+        ".gif",
+        ".tiff", ".tif",
+        ".png",
+        ".wmf"};
+#endif
     return supported_image_extensions;
 }
