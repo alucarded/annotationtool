@@ -3,6 +3,7 @@
 public delegate void ObjectSet(System::String^ obj_name, double % aspect_ratio);
 public delegate void ImageSet(System::String^ image_path);
 public delegate void AnnotationAdded(int x, int y, int w, int h);
+public delegate void ProjectLoaded(System::String^ file_path);
 
 public interface class IAnnotationView
 {
@@ -14,5 +15,6 @@ public:
     event ObjectSet^ ObjectNodeSelected;
     event ImageSet^ ImageNodeSelected;
     event AnnotationAdded^ AnnotationDrawn;
+    event ProjectLoaded^ ProjectLoadedEvent;
 };
 

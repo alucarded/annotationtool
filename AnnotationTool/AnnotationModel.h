@@ -35,6 +35,11 @@ public:
         double m_aspect_ratio;
     };
 
+    const std::string& GetProjectName() const { return m_project_name; };
+    const std::string& GetProjectDescription() const { return m_description; };
+    const Mode& GetAnnotationMode() const { return m_mode; };
+    const std::unordered_map<std::string, Object>& GetObjects() const { return m_objects; };
+    const std::unordered_map<std::string, bool>& GetFolders() const { return m_folders; };
     void GetAnnotationsForImage(const std::string& path, std::vector<Annotation>& annotations);
     void GetAspectRatio(const std::string& object_name, double & aspect_ratio);
 

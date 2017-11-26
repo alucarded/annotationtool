@@ -10,6 +10,7 @@ AnnotationPresenter::AnnotationPresenter(IAnnotationView^ view, AnnotationModel 
     view->ObjectNodeSelected += gcnew ObjectSet(this, &AnnotationPresenter::OnObjectNodeSelected);
     view->ImageNodeSelected += gcnew ImageSet(this, &AnnotationPresenter::OnImageNodeSelected);
     view->AnnotationDrawn += gcnew AnnotationAdded(this, &AnnotationPresenter::OnAnnotationDrawn);
+    view->ProjectLoadedEvent += gcnew ProjectLoaded(this, &AnnotationPresenter::OnProjectLoaded);
 }
 
 
@@ -50,4 +51,31 @@ void AnnotationPresenter::OnImageNodeSelected(System::String^ image_path)
 void AnnotationPresenter::OnAnnotationDrawn(int x, int y, int w, int h)
 {
     m_model->AddAnnotation(x, y, w, h);
+}
+
+void AnnotationPresenter::OnProjectLoaded(System::String ^ file_path)
+{
+    using namespace System::Collections;
+    using System::String;
+
+    m_model->LoadProject(MarshalString(file_path));
+    // Update UI
+    // Project name
+    String^ proj_name = gcnew String(m_model->GetProjectName().c_str());
+    String^ proj_desc = gcnew String(m_model->GetProjectDescription().c_str());
+    m_view->UpdateProject(proj_name, proj_desc, m_model->GetAnnotationMode());
+    // Objects
+    const std::unordered_map<std::string, AnnotationModel::Object>& objects = m_model->GetObjects();
+    for (auto it = objects.begin(); it != objects.end(); ++it) {
+        String^ object_name = gcnew String(it->first.c_str());
+        m_view->AddObject(object_name);
+    }
+    //Folders
+    const std::unordered_map<std::string, bool>& folders = m_model->GetFolders();
+    for (auto it = folders.begin(); it != folders.end(); ++it) {
+        System::Collections::ArrayList^ image_paths = gcnew ArrayList();
+        String^ folder_path = gcnew String(it->first.c_str());
+        GetFilesInFolder(folder_path, image_paths, SupportedImageExtensions(), it->second);
+        m_view->AddPaths(folder_path, image_paths, it->second);
+    }
 }

@@ -132,6 +132,21 @@ namespace AnnotationTool {
             }
         }
 
+        virtual event ProjectLoaded^ ProjectLoadedEvent {
+            void add(ProjectLoaded ^ d) {
+                m_project_loaded_event += d;
+            }
+            void remove(ProjectLoaded ^ d) {
+                m_project_loaded_event -= d;
+            }
+            void raise(String^ file_path) {
+                ProjectLoaded^ tmp = m_project_loaded_event;
+                if (tmp) {
+                    tmp->Invoke(file_path);
+                }
+            }
+        }
+
 	protected:
 		/// <summary>
 		/// Wyczyœæ wszystkie u¿ywane zasoby.
@@ -179,6 +194,7 @@ namespace AnnotationTool {
         ObjectSet^ m_object_set_event;
         ImageSet^ m_image_set_event;
         AnnotationAdded^ m_annotation_added_event;
+        ProjectLoaded^ m_project_loaded_event;
         String^ m_current_image_path;
 
         // Fields associated with region selection
@@ -503,7 +519,7 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
     using System::Windows::Forms::DialogResult;
     DialogResult result = this->openFileDialog1->ShowDialog();
     if (DialogResult::OK == result) {
-        m_model->LoadProject(MarshalString(this->openFileDialog1->FileName));
+        this->ProjectLoadedEvent(this->openFileDialog1->FileName);
     }
 }
 private: System::Void undoToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
