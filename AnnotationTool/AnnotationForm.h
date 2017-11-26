@@ -188,6 +188,7 @@ namespace AnnotationTool {
         int m_end_x;
         int m_end_y;
 private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
+private: System::Windows::Forms::ToolStripMenuItem^  undoToolStripMenuItem;
          // TODO: better also have boolean fixed_aspect_ratio ? (also on model side)
         double m_annotation_aspect_ratio;
 
@@ -218,6 +219,7 @@ private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
             this->saveFileDialog1 = (gcnew System::Windows::Forms::SaveFileDialog());
             this->notifyIcon1 = (gcnew System::Windows::Forms::NotifyIcon(this->components));
             this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
+            this->undoToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->ctxMenuObject->SuspendLayout();
             this->ctxMenuFolder->SuspendLayout();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
@@ -288,44 +290,45 @@ private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
             // newToolStripMenuItem
             // 
             this->newToolStripMenuItem->Name = L"newToolStripMenuItem";
-            this->newToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+            this->newToolStripMenuItem->Size = System::Drawing::Size(123, 22);
             this->newToolStripMenuItem->Text = L"New";
             this->newToolStripMenuItem->Click += gcnew System::EventHandler(this, &AnnotationForm::newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-            this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+            this->openToolStripMenuItem->Size = System::Drawing::Size(123, 22);
             this->openToolStripMenuItem->Text = L"Open..";
             this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &AnnotationForm::openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-            this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+            this->saveToolStripMenuItem->Size = System::Drawing::Size(123, 22);
             this->saveToolStripMenuItem->Text = L"Save";
             this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &AnnotationForm::saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this->saveAsToolStripMenuItem->Name = L"saveAsToolStripMenuItem";
-            this->saveAsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+            this->saveAsToolStripMenuItem->Size = System::Drawing::Size(123, 22);
             this->saveAsToolStripMenuItem->Text = L"Save As...";
             // 
             // exportToolStripMenuItem
             // 
             this->exportToolStripMenuItem->Name = L"exportToolStripMenuItem";
-            this->exportToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+            this->exportToolStripMenuItem->Size = System::Drawing::Size(123, 22);
             this->exportToolStripMenuItem->Text = L"Export...";
             // 
             // exitToolStripMenuItem
             // 
             this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-            this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+            this->exitToolStripMenuItem->Size = System::Drawing::Size(123, 22);
             this->exitToolStripMenuItem->Text = L"Exit";
             // 
             // editToolStripMenuItem
             // 
+            this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->undoToolStripMenuItem });
             this->editToolStripMenuItem->Name = L"editToolStripMenuItem";
             this->editToolStripMenuItem->Size = System::Drawing::Size(39, 20);
             this->editToolStripMenuItem->Text = L"Edit";
@@ -356,6 +359,13 @@ private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
             // openFileDialog1
             // 
             this->openFileDialog1->FileName = L"openFileDialog1";
+            // 
+            // undoToolStripMenuItem
+            // 
+            this->undoToolStripMenuItem->Name = L"undoToolStripMenuItem";
+            this->undoToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+            this->undoToolStripMenuItem->Text = L"Undo";
+            this->undoToolStripMenuItem->Click += gcnew System::EventHandler(this, &AnnotationForm::undoToolStripMenuItem_Click);
             // 
             // AnnotationForm
             // 
@@ -495,6 +505,10 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
     if (DialogResult::OK == result) {
         m_model->LoadProject(MarshalString(this->openFileDialog1->FileName));
     }
+}
+private: System::Void undoToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+    m_model->Undo();
+    this->pictureBox1->Invalidate();
 }
 };
 }

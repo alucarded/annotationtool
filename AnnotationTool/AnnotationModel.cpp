@@ -2,8 +2,9 @@
 
 #include "opencv2/core/core.hpp"
 
-AnnotationModel::AnnotationModel()
+AnnotationModel::AnnotationModel() : m_image_annotations(), m_last_annotation_it(m_image_annotations.end())
 {
+
 }
 
 AnnotationModel::~AnnotationModel()
@@ -47,6 +48,7 @@ void AnnotationModel::SetCurrentObject(const std::string & name)
 void AnnotationModel::SetImage(const std::string & name)
 {
     m_current_image_path = name;
+    m_last_annotation_it = m_image_annotations.end(); // clear last
 }
 
 void AnnotationModel::AddObject(const std::string& name, const std::string& desc, double aspect_ratio)
@@ -78,7 +80,7 @@ void AnnotationModel::AddAnnotation(const std::string& img_path, const std::stri
 
 void AnnotationModel::AddAnnotation(const std::string& img_path, const Annotation& annotation)
 {
-    m_image_annotations.insert(std::pair<std::string, Annotation>(img_path, annotation));
+    m_last_annotation_it = m_image_annotations.insert(std::pair<std::string, Annotation>(img_path, annotation));
 }
 
 void AnnotationModel::SaveProject(const std::string & path)
@@ -183,4 +185,14 @@ void AnnotationModel::LoadProject(const std::string & path)
 void AnnotationModel::Reset()
 {
     // TODO:
+}
+
+void AnnotationModel::Undo()
+{
+    // TODO: after changing std::unordered_multimap<std::string, Annotation> to unordered_map<std::string, std::vector<Annotation>>
+    // maintain Annotations in adding order per image and pop last
+    if (m_image_annotations.end() != m_last_annotation_it) {
+        m_image_annotations.erase(m_last_annotation_it);
+        m_last_annotation_it = m_image_annotations.end();
+    }
 }

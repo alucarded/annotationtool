@@ -1,6 +1,7 @@
 #pragma once
 #pragma unmanaged
 
+#include <stack>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -52,6 +53,8 @@ public:
     void LoadProject(const std::string& path);
 
     void Reset();
+
+    void Undo();
 private:
     std::string m_project_name;
     std::string m_description;
@@ -60,5 +63,7 @@ private:
     std::string m_current_image_path;
     std::unordered_map<std::string, Object> m_objects;
     std::unordered_map<std::string, bool> m_folders;
+    // TODO: change following to unordered_map<std::string, std::vector<Annotation>>
     std::unordered_multimap<std::string, Annotation> m_image_annotations; // maps absolute image path to annotations
+    std::unordered_multimap<std::string, Annotation>::iterator m_last_annotation_it;
 };
