@@ -13,37 +13,52 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Pliki źródłowe\Form">
+      <UniqueIdentifier>{c9b60028-1cb2-406b-810b-5417237c4e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\Presenter">
+      <UniqueIdentifier>{9cf6a74a-8b93-46bf-ad64-9fb4f565052e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\Model">
+      <UniqueIdentifier>{407872af-5392-4490-8131-878b790928c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\Presenter">
+      <UniqueIdentifier>{a954ccfa-6d72-4c1c-a6bb-9393814d2763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\View">
+      <UniqueIdentifier>{33ca7cf7-2421-46ec-940a-6b0a70a0b07e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnnotationForm.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="NewProjectForm.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="AnnotationModel.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="AnnotationPresenter.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="AddObjectForm.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="AddFolderForm.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="NewProjectPresenter.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="AddFolderPresenter.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="Utilities.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="AddFolderForm.cpp">
+      <Filter>Pliki źródłowe\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="AddObjectForm.cpp">
+      <Filter>Pliki źródłowe\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="AnnotationForm.cpp">
+      <Filter>Pliki źródłowe\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="NewProjectForm.cpp">
+      <Filter>Pliki źródłowe\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="AddFolderPresenter.cpp">
+      <Filter>Pliki źródłowe\Presenter</Filter>
+    </ClCompile>
     <ClCompile Include="AddObjectPresenter.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>Pliki źródłowe\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="AnnotationPresenter.cpp">
+      <Filter>Pliki źródłowe\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="NewProjectPresenter.cpp">
+      <Filter>Pliki źródłowe\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="AnnotationModel.cpp">
+      <Filter>Pliki źródłowe\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -56,38 +71,38 @@
     <ClInclude Include="AnnotationModel.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="AnnotationPresenter.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="IAnnotationView.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="AddObjectForm.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="AddFolderForm.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="NewProjectPresenter.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="INewProjectView.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="AddFolderPresenter.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="IAddFolderView.h">
-      <Filter>Pliki nagłówkowe</Filter>
+      <Filter>Pliki nagłówkowe\Presenter</Filter>
     </ClInclude>
     <ClInclude Include="AddObjectPresenter.h">
-      <Filter>Pliki nagłówkowe</Filter>
+      <Filter>Pliki nagłówkowe\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="AnnotationPresenter.h">
+      <Filter>Pliki nagłówkowe\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="NewProjectPresenter.h">
+      <Filter>Pliki nagłówkowe\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="IAddFolderView.h">
+      <Filter>Pliki nagłówkowe\View</Filter>
     </ClInclude>
     <ClInclude Include="IAddObjectView.h">
-      <Filter>Pliki nagłówkowe</Filter>
+      <Filter>Pliki nagłówkowe\View</Filter>
+    </ClInclude>
+    <ClInclude Include="IAnnotationView.h">
+      <Filter>Pliki nagłówkowe\View</Filter>
+    </ClInclude>
+    <ClInclude Include="INewProjectView.h">
+      <Filter>Pliki nagłówkowe\View</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
